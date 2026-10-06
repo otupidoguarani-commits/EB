@@ -316,4 +316,5 @@ exports.handler = async event => {
       erro: 'Erro interno ao consultar o militar.',
       detalhe: error.message
     });
-}
+  }
+};
