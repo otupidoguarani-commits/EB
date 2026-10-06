@@ -1,0 +1,2238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>EB — Central de Comando & CDP</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+<style>
+
+:root {
+    --bg:#07100b;
+    --panel:#0b1710;
+    --panel2:#0e1d14;
+    --green:#1f8f4d;
+    --green2:#2dbb68;
+    --gold:#d6b35a;
+    --red:#b83a3a;
+    --gray:#84928a;
+    --white:#e9eee9;
+    --border:#183322;
+}
+
+* {
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body {
+    min-height:100vh;
+    background:
+        radial-gradient(
+            circle at top,
+            #102319 0%,
+            #07100b 45%,
+            #030704 100%
+        );
+    color:var(--white);
+    font-family:'Rajdhani',sans-serif;
+}
+
+button,
+input {
+    font-family:inherit;
+}
+
+button {
+    cursor:pointer;
+}
+
+.header {
+    min-height:80px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:15px 28px;
+    border-bottom:1px solid var(--border);
+    background:rgba(5,12,8,.95);
+    position:sticky;
+    top:0;
+    z-index:50;
+}
+
+.logo-area {
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.logo {
+    width:48px;
+    height:48px;
+    border:1px solid var(--green);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--green2);
+    font-size:22px;
+    background:#09150d;
+}
+
+.logo-text h1 {
+    font-size:21px;
+    letter-spacing:2px;
+}
+
+.logo-text span {
+    color:var(--gray);
+    font-size:11px;
+    letter-spacing:2px;
+}
+
+.btn-discord {
+    border:1px solid #5865f2;
+    background:#5865f2;
+    color:white;
+    padding:11px 17px;
+    border-radius:5px;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.btn-discord:hover {
+    filter:brightness(1.12);
+}
+
+.area-usuario {
+    display:none;
+    align-items:center;
+    gap:10px;
+}
+
+.area-usuario.mostrar {
+    display:flex;
+}
+
+.avatar {
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    border:1px solid var(--green);
+}
+
+.usuario-info {
+    text-align:right;
+}
+
+.usuario-info strong {
+    display:block;
+}
+
+.usuario-info span {
+    font-size:11px;
+    color:var(--green2);
+}
+
+.btn-sair {
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--gray);
+    padding:8px 10px;
+    border-radius:4px;
+}
+
+.layout {
+    display:flex;
+    min-height:calc(100vh - 80px);
+}
+
+.sidebar {
+    width:240px;
+    border-right:1px solid var(--border);
+    background:#08130c;
+    padding:20px 14px;
+}
+
+.menu-title {
+    color:var(--gray);
+    font-size:10px;
+    letter-spacing:2px;
+    margin:8px 10px 10px;
+}
+
+.aba {
+    width:100%;
+    text-align:left;
+    border:1px solid transparent;
+    background:transparent;
+    color:#aeb8b0;
+    padding:13px 12px;
+    margin-bottom:5px;
+    border-radius:4px;
+    display:flex;
+    align-items:center;
+    gap:11px;
+    font-weight:600;
+}
+
+.aba:hover,
+.aba.ativa {
+    color:var(--white);
+    background:#0d2115;
+    border-color:var(--border);
+}
+
+.aba.ativa {
+    box-shadow:inset 3px 0 var(--green2);
+}
+
+.conteudo {
+    flex:1;
+    padding:28px;
+    max-width:1400px;
+    margin:auto;
+    width:100%;
+}
+
+.pagina {
+    display:none;
+}
+
+.pagina.ativa {
+    display:block;
+}
+
+.titulo-pagina {
+    margin-bottom:22px;
+}
+
+.titulo-pagina h2 {
+    font-size:27px;
+    letter-spacing:1px;
+}
+
+.titulo-pagina p {
+    color:var(--gray);
+    font-size:13px;
+    margin-top:4px;
+}
+
+.card {
+    background:linear-gradient(
+        145deg,
+        rgba(14,29,20,.96),
+        rgba(7,16,11,.96)
+    );
+    border:1px solid var(--border);
+    border-radius:7px;
+    padding:20px;
+    margin-bottom:18px;
+}
+
+.card-title {
+    display:flex;
+    align-items:center;
+    gap:9px;
+    color:var(--green2);
+    font-size:14px;
+    letter-spacing:1px;
+    margin-bottom:17px;
+}
+
+.input-group {
+    display:flex;
+    gap:10px;
+}
+
+.input {
+    flex:1;
+    background:#050c08;
+    color:var(--white);
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:12px 13px;
+    outline:none;
+}
+
+.input:focus {
+    border-color:var(--green);
+}
+
+.btn {
+    border:1px solid var(--green);
+    background:#102719;
+    color:var(--green2);
+    padding:11px 17px;
+    border-radius:4px;
+    font-weight:700;
+}
+
+.btn:hover {
+    background:#15351f;
+}
+
+.btn-primary {
+    background:var(--green);
+    color:white;
+}
+
+.btn-primary:hover {
+    background:var(--green2);
+}
+
+.btn:disabled {
+    opacity:.4;
+    cursor:not-allowed;
+}
+
+.status {
+    display:none;
+    padding:12px;
+    margin-bottom:15px;
+    border-radius:4px;
+    font-size:13px;
+}
+
+.status.sucesso,
+.status.erro {
+    display:block;
+}
+
+.status.sucesso {
+    border:1px solid #23683d;
+    background:#0b2114;
+    color:#71d796;
+}
+
+.status.erro {
+    border:1px solid #743030;
+    background:#210d0d;
+    color:#e17d7d;
+}
+
+.bloco-dados {
+    display:none;
+}
+
+.bloco-dados.mostrar {
+    display:block;
+}
+
+.grid-dados {
+    display:grid;
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+    gap:12px;
+}
+
+.dado {
+    background:#07110b;
+    border:1px solid var(--border);
+    padding:14px;
+    border-radius:4px;
+}
+
+.dado-label {
+    color:var(--gray);
+    font-size:10px;
+    letter-spacing:1px;
+    margin-bottom:5px;
+}
+
+.dado-valor {
+    font-weight:700;
+    font-size:16px;
+}
+
+.timer-box {
+    margin-top:15px;
+    border:1px solid #725f2d;
+    background:#17150a;
+    padding:18px;
+    text-align:center;
+    border-radius:5px;
+}
+
+.timer-box.liberado {
+    border-color:#267346;
+    background:#091a10;
+}
+
+.timer-title {
+    color:var(--gold);
+    font-size:11px;
+    letter-spacing:1px;
+}
+
+.timer-value {
+    margin-top:7px;
+    font-family:'Share Tech Mono',monospace;
+    font-size:27px;
+}
+
+.acoes {
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:15px;
+}
+
+.lista-historico {
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.item-historico {
+    border:1px solid var(--border);
+    background:#07110b;
+    padding:13px;
+    border-radius:4px;
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.hist-nome {
+    font-weight:700;
+}
+
+.hist-detalhe {
+    color:var(--gray);
+    font-size:12px;
+    margin-top:4px;
+}
+
+.hist-meta {
+    color:var(--gray);
+    font-size:11px;
+    text-align:right;
+}
+
+.grid-hierarquia {
+    display:grid;
+    grid-template-columns:
+        repeat(auto-fit,minmax(220px,1fr));
+    gap:10px;
+}
+
+.card-patente {
+    border:1px solid var(--border);
+    background:#07110b;
+    padding:15px;
+    border-radius:5px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.card-patente.elite {
+    border-color:#705b28;
+    background:#151207;
+}
+
+.patente-nome {
+    font-weight:700;
+}
+
+.patente-cdp {
+    color:var(--gray);
+    font-size:11px;
+    margin-top:4px;
+}
+
+.patente-sigla {
+    color:var(--green2);
+    font-family:'Share Tech Mono',monospace;
+}
+
+.card-patente.elite .patente-sigla {
+    color:var(--gold);
+}
+
+@media(max-width:850px) {
+
+    .sidebar {
+        width:190px;
+    }
+
+    .conteudo {
+        padding:18px;
+    }
+
+    .grid-dados {
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:650px) {
+
+    .header {
+        padding:12px 15px;
+    }
+
+    .logo-text span {
+        display:none;
+    }
+
+    .logo-text h1 {
+        font-size:16px;
+    }
+
+    .layout {
+        display:block;
+    }
+
+    .sidebar {
+        width:100%;
+        border-right:0;
+        border-bottom:1px solid var(--border);
+        display:flex;
+        gap:5px;
+        overflow-x:auto;
+        padding:8px;
+    }
+
+    .menu-title {
+        display:none;
+    }
+
+    .aba {
+        min-width:max-content;
+        margin:0;
+    }
+
+    .input-group {
+        flex-direction:column;
+    }
+
+    .item-historico {
+        flex-direction:column;
+    }
+
+    .hist-meta {
+        text-align:left;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="logo-area">
+
+        <div class="logo">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+
+        <div class="logo-text">
+            <h1>EXÉRCITO BRASILEIRO</h1>
+            <span>CENTRAL DE COMANDO OPERACIONAL</span>
+        </div>
+
+    </div>
+
+    <button
+        id="btnDiscord"
+        class="btn-discord"
+        onclick="entrarDiscord()"
+    >
+        <i class="fa-brands fa-discord"></i>
+        VERIFICAR COM DISCORD
+    </button>
+
+    <div
+        id="areaUsuario"
+        class="area-usuario"
+    >
+
+        <div class="usuario-info">
+            <strong id="nomeUser">-</strong>
+            <span id="patenteUser">-</span>
+        </div>
+
+        <img
+            id="avatarUser"
+            class="avatar"
+            src=""
+            alt=""
+        >
+
+        <button
+            class="btn-sair"
+            onclick="sair()"
+        >
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+
+    </div>
+
+</header>
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="menu-title">
+            SISTEMA OPERACIONAL
+        </div>
+
+        <button
+            id="abaPromover"
+            class="aba ativa"
+            onclick="trocarAba('promover')"
+        >
+            <i class="fa-solid fa-arrow-up"></i>
+            PROMOVER MILITAR
+        </button>
+
+        <button
+            id="abaConsulta"
+            class="aba"
+            onclick="trocarAba('consulta')"
+        >
+            <i class="fa-solid fa-magnifying-glass"></i>
+            CONSULTA CDP
+        </button>
+
+        <button
+            id="abaHierarquia"
+            class="aba"
+            onclick="trocarAba('hierarquia')"
+        >
+            <i class="fa-solid fa-sitemap"></i>
+            HIERARQUIA
+        </button>
+
+    </aside>
+
+    <main class="conteudo">
+
+        <div
+            id="caixaStatus"
+            class="status"
+        ></div>
+
+        <section
+            id="pagPromover"
+            class="pagina ativa"
+        >
+
+            <div class="titulo-pagina">
+                <h2>PROMOVER MILITAR</h2>
+                <p>
+                    Consulte o militar e verifique
+                    sua elegibilidade para promoção.
+                </p>
+            </div>
+
+            <div class="card">
+
+                <div class="card-title">
+                    <i class="fa-solid fa-user-shield"></i>
+                    IDENTIFICAÇÃO DO MILITAR
+                </div>
+
+                <div class="input-group">
+
+                    <input
+                        id="nickInput"
+                        class="input"
+                        type="text"
+                        placeholder="Digite o nome ou identificador do militar..."
+                        autocomplete="off"
+                    >
+
+                    <button
+                        class="btn"
+                        onclick="buscarDados()"
+                    >
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        CONSULTAR
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div
+                id="blocoDados"
+                class="bloco-dados"
+            >
+
+                <div class="card">
+
+                    <div class="card-title">
+                        <i class="fa-solid fa-id-card"></i>
+                        DADOS DO MILITAR
+                    </div>
+
+                    <div class="grid-dados">
+
+                        <div class="dado">
+                            <div class="dado-label">
+                                MILITAR
+                            </div>
+
+                            <div
+                                id="mostrarNick"
+                                class="dado-valor"
+                            >
+                                -
+                            </div>
+                        </div>
+
+                        <div class="dado">
+                            <div class="dado-label">
+                                PATENTE ATUAL
+                            </div>
+
+                            <div
+                                id="patenteAtual"
+                                class="dado-valor"
+                            >
+                                -
+                            </div>
+                        </div>
+
+                        <div class="dado">
+                            <div class="dado-label">
+                                PRÓXIMA PATENTE
+                            </div>
+
+                            <div
+                                id="proximaPatente"
+                                class="dado-valor"
+                            >
+                                -
+                            </div>
+                        </div>
+
+                        <div class="dado">
+                            <div class="dado-label">
+                                CDP NECESSÁRIO
+                            </div>
+
+                            <div
+                                id="tempoCdpRequerido"
+                                class="dado-valor"
+                            >
+                                -
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div
+                        id="caixaTimer"
+                        class="timer-box"
+                    >
+
+                        <div
+                            id="timerTitulo"
+                            class="timer-title"
+                        >
+                            TEMPO RESTANTE CDP
+                        </div>
+
+                        <div
+                            id="timerContagem"
+                            class="timer-value"
+                        >
+                            --
+                        </div>
+
+                    </div>
+
+                    <div class="acoes">
+
+                        <button
+                            id="btnPromover"
+                            class="btn btn-primary"
+                            onclick="confirmarPromocao()"
+                            disabled
+                        >
+                            <i class="fa-solid fa-arrow-up"></i>
+                            PROMOVER MILITAR
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section
+            id="pagConsulta"
+            class="pagina"
+        >
+
+            <div class="titulo-pagina">
+
+                <h2>CONSULTA CDP</h2>
+
+                <p>
+                    Consulte a patente e o período
+                    necessário para promoção.
+                </p>
+
+            </div>
+
+            <div class="card">
+
+                <div class="card-title">
+                    <i class="fa-solid fa-clock"></i>
+                    CONSULTAR MILITAR
+                </div>
+
+                <input
+                    id="consultaNick"
+                    class="input"
+                    type="text"
+                    placeholder="Nome ou identificador..."
+                    oninput="consultarPatente()"
+                    autocomplete="off"
+                >
+
+            </div>
+
+            <div
+                id="resultadoConsulta"
+                class="card"
+                style="display:none;"
+            >
+
+                <div class="card-title">
+                    <i class="fa-solid fa-file-lines"></i>
+                    RESULTADO
+                </div>
+
+                <div class="grid-dados">
+
+                    <div class="dado">
+                        <div class="dado-label">
+                            MILITAR
+                        </div>
+
+                        <div
+                            id="consultaNome"
+                            class="dado-valor"
+                        >
+                            -
+                        </div>
+                    </div>
+
+                    <div class="dado">
+                        <div class="dado-label">
+                            PATENTE
+                        </div>
+
+                        <div
+                            id="consultaPatente"
+                            class="dado-valor"
+                        >
+                            -
+                        </div>
+                    </div>
+
+                    <div class="dado">
+                        <div class="dado-label">
+                            ÚLTIMA PROMOÇÃO
+                        </div>
+
+                        <div
+                            id="consultaData"
+                            class="dado-valor"
+                        >
+                            -
+                        </div>
+                    </div>
+
+                </div>
+
+                <div
+                    id="consultaCaixaTimer"
+                    class="timer-box"
+                >
+
+                    <div
+                        id="consultaTimerTitulo"
+                        class="timer-title"
+                    >
+                        STATUS DO CDP
+                    </div>
+
+                    <div
+                        id="consultaTimerValor"
+                        class="timer-value"
+                    >
+                        --
+                    </div>
+
+                    <div
+                        id="consultaStatusCdp"
+                        style="margin-top:8px;color:var(--gray);font-size:12px;"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section
+            id="pagHierarquia"
+            class="pagina"
+        >
+
+            <div class="titulo-pagina">
+
+                <h2>HIERARQUIA</h2>
+
+                <p>
+                    Estrutura de patentes e respectivos
+                    períodos de CDP.
+                </p>
+
+            </div>
+
+            <div class="card">
+
+                <div
+                    id="gridHierarquiaContainer"
+                    class="grid-hierarquia"
+                ></div>
+
+            </div>
+
+        </section>
+
+        <section class="card">
+
+            <div class="card-title">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                HISTÓRICO DE PROMOÇÕES
+            </div>
+
+            <div
+                id="listaHistorico"
+                class="lista-historico"
+            >
+                <p
+                    style="
+                    color:var(--gray);
+                    text-align:center;
+                    padding:20px;
+                    font-size:12px;
+                    "
+                >
+                    AUTENTIQUE-SE PARA CONSULTAR
+                    O HISTÓRICO.
+                </p>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+
+const REDIRECT_URI = window.location.origin;
+
+const API = `${window.location.origin}/.netlify/functions`;
+
+const HIERARQUIA = [
+    { nome:'Recruta', sigla:'REC', diasNecessarios:0 },
+    { nome:'Soldado', sigla:'SD', diasNecessarios:1 },
+    { nome:'Cabo', sigla:'CB', diasNecessarios:1 },
+    { nome:'Terceiro Sargento', sigla:'3° SGT', diasNecessarios:2 },
+    { nome:'Segundo Sargento', sigla:'2° SGT', diasNecessarios:2 },
+    { nome:'Primeiro Sargento', sigla:'1° SGT', diasNecessarios:3 },
+    { nome:'Subtenente', sigla:'ST', diasNecessarios:3 },
+    { nome:'Aspirante a Oficial', sigla:'ASP', diasNecessarios:3 },
+    { nome:'Segundo Tenente', sigla:'2° TEN', diasNecessarios:3 },
+    { nome:'Primeiro Tenente', sigla:'1° TEN', diasNecessarios:4 },
+    { nome:'Capitão', sigla:'CAP', diasNecessarios:4 },
+    { nome:'Major', sigla:'MAJ', diasNecessarios:4 },
+    { nome:'Tenente Coronel', sigla:'TEN-CEL', diasNecessarios:5 },
+    { nome:'Coronel', sigla:'CEL', diasNecessarios:5 },
+    { nome:'General de Brigada', sigla:'GEN BDA', diasNecessarios:6 },
+    { nome:'General de Divisão', sigla:'GEN DV', diasNecessarios:7 },
+    { nome:'General de Exército', sigla:'GEN EX', diasNecessarios:8 },
+    { nome:'Elite Militar', sigla:'EM', elite:true, diasNecessarios:10 },
+    { nome:'Elite Secreta', sigla:'ES', elite:true, diasNecessarios:12 },
+    { nome:'Elite Real', sigla:'ER', elite:true, diasNecessarios:14 }
+];
+
+let usuarioLogado = null;
+let militarConsultado = null;
+
+let intervalTimerPromover = null;
+let intervalTimerConsulta = null;
+
+
+/* =========================
+   API
+========================= */
+
+async function apiFetch(path, options = {}) {
+
+    const response = await fetch(
+        `${API}${path}`,
+        {
+            credentials:'include',
+            ...options,
+
+            headers:{
+                'Content-Type':'application/json',
+                ...(options.headers || {})
+            }
+        }
+    );
+
+    const text = await response.text();
+
+    let data = {};
+
+    try {
+
+        data = text
+            ? JSON.parse(text)
+            : {};
+
+    } catch {
+
+        data = {
+            erro:text
+        };
+
+    }
+
+    if (!response.ok) {
+
+        if (response.status === 404) {
+
+            throw new Error(
+                'A função do servidor não foi encontrada (404). Verifique se o auth.js foi publicado como Netlify Function.'
+            );
+
+        }
+
+        throw new Error(
+            data.erro ||
+            data.error ||
+            `Erro HTTP ${response.status}`
+        );
+
+    }
+
+    return data;
+
+}
+
+
+/* =========================
+   DISCORD
+========================= */
+
+function entrarDiscord() {
+
+    const clientId =
+        '1555374399920541816';
+
+    const scope =
+        encodeURIComponent(
+            'identify guilds.members.read'
+        );
+
+    const url =
+        `https://discord.com/oauth2/authorize` +
+        `?client_id=${clientId}` +
+        `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
+        `&response_type=code` +
+        `&scope=${scope}`;
+
+    window.location.href = url;
+
+}
+
+
+/* =========================
+   CALLBACK DISCORD
+========================= */
+
+async function processarCallback() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const code =
+        params.get('code');
+
+    if (!code)
+        return;
+
+    try {
+
+        const data =
+            await apiFetch(
+                '/auth',
+                {
+                    method:'POST',
+
+                    body:JSON.stringify({
+                        code,
+                        redirect_uri:REDIRECT_URI
+                    })
+                }
+            );
+
+        if (data.usuario) {
+
+            usuarioLogado =
+                data.usuario;
+
+            localStorage.setItem(
+                'usuario_ativo',
+                JSON.stringify(
+                    usuarioLogado
+                )
+            );
+
+            atualizarInterfaceUsuario();
+
+            carregarHistorico();
+
+        }
+
+        window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+        );
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        mostrarStatus(
+            'erro',
+
+            '<i class="fa-solid fa-triangle-exclamation"></i> ' +
+
+            escapeHtml(
+                erro.message ||
+                'Falha na autenticação.'
+            )
+        );
+
+        window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+        );
+
+    }
+
+}
+
+
+/* =========================
+   USUÁRIO
+========================= */
+
+function carregarUsuarioSalvo() {
+
+    try {
+
+        const salvo =
+            localStorage.getItem(
+                'usuario_ativo'
+            );
+
+        if (salvo) {
+
+            usuarioLogado =
+                JSON.parse(salvo);
+
+            atualizarInterfaceUsuario();
+
+        }
+
+    } catch {
+
+        localStorage.removeItem(
+            'usuario_ativo'
+        );
+
+    }
+
+}
+
+
+function atualizarInterfaceUsuario() {
+
+    if (!usuarioLogado)
+        return;
+
+    document.getElementById(
+        'btnDiscord'
+    ).style.display =
+        'none';
+
+    document.getElementById(
+        'areaUsuario'
+    ).classList.add(
+        'mostrar'
+    );
+
+    document.getElementById(
+        'nomeUser'
+    ).textContent =
+        usuarioLogado.nome ||
+        usuarioLogado.username ||
+        '-';
+
+    document.getElementById(
+        'patenteUser'
+    ).textContent =
+        usuarioLogado.patente ||
+        'PATENTE NÃO IDENTIFICADA';
+
+    if (usuarioLogado.avatar) {
+
+        document.getElementById(
+            'avatarUser'
+        ).src =
+            usuarioLogado.avatar;
+
+    }
+
+}
+
+
+async function sair() {
+
+    try {
+
+        await apiFetch(
+            '/auth',
+            {
+                method:'DELETE'
+            }
+        );
+
+    } catch {}
+
+    localStorage.removeItem(
+        'usuario_ativo'
+    );
+
+    usuarioLogado = null;
+
+    militarConsultado = null;
+
+    document.getElementById(
+        'btnDiscord'
+    ).style.display =
+        'flex';
+
+    document.getElementById(
+        'areaUsuario'
+    ).classList.remove(
+        'mostrar'
+    );
+
+    document.getElementById(
+        'btnPromover'
+    ).disabled =
+        true;
+
+}
+
+
+/* =========================
+   ABAS
+========================= */
+
+function trocarAba(nome) {
+
+    document
+        .querySelectorAll('.aba')
+        .forEach(
+            a =>
+                a.classList.remove(
+                    'ativa'
+                )
+        );
+
+    document
+        .querySelectorAll('.pagina')
+        .forEach(
+            p =>
+                p.classList.remove(
+                    'ativa'
+                )
+        );
+
+    const idAba =
+        `aba${
+            nome.charAt(0).toUpperCase()
+            +
+            nome.slice(1)
+        }`;
+
+    const idPagina =
+        `pag${
+            nome.charAt(0).toUpperCase()
+            +
+            nome.slice(1)
+        }`;
+
+    document
+        .getElementById(idAba)
+        ?.classList.add(
+            'ativa'
+        );
+
+    document
+        .getElementById(idPagina)
+        ?.classList.add(
+            'ativa'
+        );
+
+}
+
+
+/* =========================
+   TEMPO
+========================= */
+
+function formatarTempo(ms) {
+
+    if (ms <= 0)
+        return '00d 00h 00m 00s';
+
+    const segundos =
+        Math.floor(
+            (ms / 1000) % 60
+        );
+
+    const minutos =
+        Math.floor(
+            (ms / (1000 * 60)) % 60
+        );
+
+    const horas =
+        Math.floor(
+            (ms / (1000 * 60 * 60)) % 24
+        );
+
+    const dias =
+        Math.floor(
+            ms /
+            (1000 * 60 * 60 * 24)
+        );
+
+    return (
+        `${String(dias).padStart(2,'0')}d ` +
+        `${String(horas).padStart(2,'0')}h ` +
+        `${String(minutos).padStart(2,'0')}m ` +
+        `${String(segundos).padStart(2,'0')}s`
+    );
+
+}
+
+
+/* =========================
+   BUSCAR MILITAR
+========================= */
+
+async function buscarDados() {
+
+    const nick =
+        document
+            .getElementById(
+                'nickInput'
+            )
+            .value
+            .trim();
+
+    if (intervalTimerPromover)
+        clearInterval(
+            intervalTimerPromover
+        );
+
+    if (!nick) {
+
+        document
+            .getElementById(
+                'blocoDados'
+            )
+            .classList.remove(
+                'mostrar'
+            );
+
+        document
+            .getElementById(
+                'btnPromover'
+            )
+            .disabled =
+            true;
+
+        militarConsultado = null;
+
+        return;
+
+    }
+
+    if (!usuarioLogado) {
+
+        mostrarStatus(
+            'erro',
+
+            '<i class="fa-solid fa-triangle-exclamation"></i> AUTENTIQUE-SE COM O DISCORD PRIMEIRO.'
+        );
+
+        return;
+
+    }
+
+    try {
+
+        const data =
+            await apiFetch(
+                `/militar?identificador=${encodeURIComponent(nick)}`
+            );
+
+        const militar =
+            data.militar ||
+            data;
+
+        if (
+            !militar ||
+            !militar.patente
+        ) {
+
+            throw new Error(
+                'Militar não encontrado.'
+            );
+
+        }
+
+        militarConsultado =
+            militar;
+
+        const indice =
+            HIERARQUIA.findIndex(
+                p =>
+                    p.nome === militar.patente ||
+                    p.sigla === militar.patente
+            );
+
+        const patenteAtual =
+            HIERARQUIA[
+                indice >= 0
+                    ? indice
+                    : 0
+            ];
+
+        const proxima =
+            data.proximaPatente ||
+            HIERARQUIA[
+                indice + 1
+            ];
+
+        document.getElementById(
+            'mostrarNick'
+        ).textContent =
+            militar.nome ||
+            nick;
+
+        document.getElementById(
+            'patenteAtual'
+        ).textContent =
+            `${patenteAtual.nome} [${patenteAtual.sigla}]`;
+
+        document.getElementById(
+            'proximaPatente'
+        ).textContent =
+            proxima
+                ? `${proxima.nome} [${proxima.sigla}]`
+                : 'PATENTE MÁXIMA ATINGIDA';
+
+        document.getElementById(
+            'tempoCdpRequerido'
+        ).textContent =
+            patenteAtual.diasNecessarios > 0
+                ? `${patenteAtual.diasNecessarios} dia(s)`
+                : 'Sem carência';
+
+        document
+            .getElementById(
+                'blocoDados'
+            )
+            .classList.add(
+                'mostrar'
+            );
+
+        const atualizar = () => {
+
+            const restante =
+                Number(
+                    data.cdpRestanteMs ?? 0
+                );
+
+            if (restante <= 0) {
+
+                const caixa =
+                    document.getElementById(
+                        'caixaTimer'
+                    );
+
+                caixa.className =
+                    'timer-box liberado';
+
+                document.getElementById(
+                    'timerTitulo'
+                ).textContent =
+                    'SITUAÇÃO CDP // LIBERADO PARA PROMOÇÃO';
+
+                document.getElementById(
+                    'timerContagem'
+                ).textContent =
+                    'CDP CONCLUÍDO';
+
+                document.getElementById(
+                    'btnPromover'
+                ).disabled =
+                    !proxima;
+
+                if (
+                    intervalTimerPromover
+                ) {
+
+                    clearInterval(
+                        intervalTimerPromover
+                    );
+
+                }
+
+            } else {
+
+                document.getElementById(
+                    'caixaTimer'
+                ).className =
+                    'timer-box';
+
+                document.getElementById(
+                    'timerTitulo'
+                ).textContent =
+                    'TEMPO RESTANTE CDP PARA PRÓXIMA PROMOÇÃO';
+
+                document.getElementById(
+                    'timerContagem'
+                ).textContent =
+                    formatarTempo(
+                        restante
+                    );
+
+                document.getElementById(
+                    'btnPromover'
+                ).disabled =
+                    true;
+
+                data.cdpRestanteMs =
+                    Math.max(
+                        0,
+                        data.cdpRestanteMs -
+                        1000
+                    );
+
+            }
+
+        };
+
+        atualizar();
+
+        if (
+            Number(
+                data.cdpRestanteMs
+            ) > 0
+        ) {
+
+            intervalTimerPromover =
+                setInterval(
+                    atualizar,
+                    1000
+                );
+
+        }
+
+    } catch (erro) {
+
+        militarConsultado = null;
+
+        document
+            .getElementById(
+                'blocoDados'
+            )
+            .classList.remove(
+                'mostrar'
+            );
+
+        document
+            .getElementById(
+                'btnPromover'
+            ).disabled =
+            true;
+
+        mostrarStatus(
+            'erro',
+
+            '<i class="fa-solid fa-triangle-exclamation"></i> ' +
+
+            escapeHtml(
+                erro.message
+            )
+        );
+
+    }
+
+}
+
+async function confirmarPromocao() {
+
+    if (
+        !usuarioLogado ||
+        !militarConsultado
+    ) {
+
+        mostrarStatus(
+            'erro',
+            '<i class="fa-solid fa-triangle-exclamation"></i> AUTENTICAÇÃO E MILITAR NECESSÁRIOS.'
+        );
+
+        return;
+    }
+
+    const nick =
+        document
+            .getElementById('nickInput')
+            .value
+            .trim();
+
+    if (!nick)
+        return;
+
+    const btn =
+        document.getElementById(
+            'btnPromover'
+        );
+
+    btn.disabled = true;
+
+    try {
+
+        const data =
+            await apiFetch(
+                '/promover',
+                {
+                    method:'POST',
+
+                    body:JSON.stringify({
+                        identificador:nick
+                    })
+                }
+            );
+
+        mostrarStatus(
+            'sucesso',
+
+            `<i class="fa-solid fa-circle-check"></i> ${
+                escapeHtml(
+                    data.mensagem ||
+                    'PROMOÇÃO CONCLUÍDA.'
+                )
+            }`
+        );
+
+        document.getElementById(
+            'nickInput'
+        ).value = '';
+
+        document
+            .getElementById(
+                'blocoDados'
+            )
+            .classList.remove(
+                'mostrar'
+            );
+
+        militarConsultado = null;
+
+        carregarHistorico();
+
+    } catch (erro) {
+
+        mostrarStatus(
+            'erro',
+
+            '<i class="fa-solid fa-triangle-exclamation"></i> ' +
+
+            escapeHtml(
+                erro.message
+            )
+        );
+
+        btn.disabled = false;
+
+    }
+
+}
+
+
+/* =========================
+   CONSULTA CDP
+========================= */
+
+let consultaDebounce;
+
+
+function consultarPatente() {
+
+    clearTimeout(
+        consultaDebounce
+    );
+
+    const nick =
+        document
+            .getElementById(
+                'consultaNick'
+            )
+            .value
+            .trim();
+
+    if (!nick) {
+
+        document
+            .getElementById(
+                'resultadoConsulta'
+            )
+            .style.display =
+            'none';
+
+        return;
+
+    }
+
+    consultaDebounce =
+        setTimeout(
+            async () => {
+
+                if (
+                    intervalTimerConsulta
+                ) {
+
+                    clearInterval(
+                        intervalTimerConsulta
+                    );
+
+                }
+
+                try {
+
+                    const data =
+                        await apiFetch(
+                            `/militar?identificador=${encodeURIComponent(nick)}`
+                        );
+
+                    const militar =
+                        data.militar ||
+                        data;
+
+                    const resultado =
+                        document.getElementById(
+                            'resultadoConsulta'
+                        );
+
+                    resultado.style.display =
+                        'block';
+
+                    document.getElementById(
+                        'consultaNome'
+                    ).textContent =
+                        militar.nome ||
+                        nick;
+
+                    document.getElementById(
+                        'consultaPatente'
+                    ).textContent =
+                        militar.patente ||
+                        '-';
+
+                    const dataPromocao =
+                        militar.data_promocao
+                            ? new Date(
+                                militar.data_promocao
+                            )
+                            : null;
+
+                    document.getElementById(
+                        'consultaData'
+                    ).textContent =
+                        dataPromocao
+                            ? dataPromocao.toLocaleString(
+                                'pt-BR'
+                            )
+                            : '-';
+
+
+                    const atualizar =
+                        () => {
+
+                            const restante =
+                                Number(
+                                    data.cdpRestanteMs ??
+                                    0
+                                );
+
+                            if (
+                                restante <= 0
+                            ) {
+
+                                document.getElementById(
+                                    'consultaStatusCdp'
+                                ).textContent =
+                                    'LIBERADO // APTO PARA A PRÓXIMA PATENTE';
+
+                                document.getElementById(
+                                    'consultaCaixaTimer'
+                                ).className =
+                                    'timer-box liberado';
+
+                                document.getElementById(
+                                    'consultaTimerTitulo'
+                                ).textContent =
+                                    'STATUS DO CDP';
+
+                                document.getElementById(
+                                    'consultaTimerValor'
+                                ).textContent =
+                                    'HABILITADO PARA PROMOÇÃO';
+
+                                if (
+                                    intervalTimerConsulta
+                                ) {
+
+                                    clearInterval(
+                                        intervalTimerConsulta
+                                    );
+
+                                }
+
+                            } else {
+
+                                document.getElementById(
+                                    'consultaStatusCdp'
+                                ).textContent =
+                                    'EM CONTAGEM REGRESSIVA (CDP ATIVO)';
+
+                                document.getElementById(
+                                    'consultaCaixaTimer'
+                                ).className =
+                                    'timer-box';
+
+                                document.getElementById(
+                                    'consultaTimerTitulo'
+                                ).textContent =
+                                    'TEMPO RESTANTE PARA HABILITAÇÃO';
+
+                                document.getElementById(
+                                    'consultaTimerValor'
+                                ).textContent =
+                                    formatarTempo(
+                                        restante
+                                    );
+
+                                data.cdpRestanteMs =
+                                    Math.max(
+                                        0,
+                                        data.cdpRestanteMs -
+                                        1000
+                                    );
+
+                            }
+
+                        };
+
+
+                    atualizar();
+
+
+                    if (
+                        Number(
+                            data.cdpRestanteMs
+                        ) > 0
+                    ) {
+
+                        intervalTimerConsulta =
+                            setInterval(
+                                atualizar,
+                                1000
+                            );
+
+                    }
+
+                } catch (erro) {
+
+                    document
+                        .getElementById(
+                            'resultadoConsulta'
+                        )
+                        .style.display =
+                        'none';
+
+                    mostrarStatus(
+                        'erro',
+
+                        '<i class="fa-solid fa-triangle-exclamation"></i> ' +
+
+                        escapeHtml(
+                            erro.message
+                        )
+                    );
+
+                }
+
+            },
+            300
+        );
+
+}
+
+
+/* =========================
+   STATUS
+========================= */
+
+function mostrarStatus(
+    tipo,
+    texto
+) {
+
+    const el =
+        document.getElementById(
+            'caixaStatus'
+        );
+
+    el.className =
+        `status ${tipo}`;
+
+    el.innerHTML =
+        texto;
+
+    setTimeout(
+        () => {
+
+            el.className =
+                'status';
+
+        },
+        5000
+    );
+
+}
+
+
+/* =========================
+   HISTÓRICO
+========================= */
+
+async function carregarHistorico() {
+
+    const div =
+        document.getElementById(
+            'listaHistorico'
+        );
+
+    if (!usuarioLogado) {
+
+        div.innerHTML =
+            '<p style="color:var(--gray);text-align:center;padding:20px;font-size:12px;">AUTENTIQUE-SE PARA CONSULTAR O HISTÓRICO.</p>';
+
+        return;
+
+    }
+
+    try {
+
+        const data =
+            await apiFetch(
+                '/historico'
+            );
+
+        const historico =
+            data.historico ||
+            [];
+
+        if (!historico.length) {
+
+            div.innerHTML =
+                '<p style="color:var(--gray);text-align:center;padding:20px;font-size:12px;">NENHUMA OPERAÇÃO REGISTRADA.</p>';
+
+            return;
+
+        }
+
+        div.innerHTML =
+            historico
+                .map(
+                    h => `
+
+                    <div class="item-historico">
+
+                        <div class="hist-info">
+
+                            <div class="hist-nome">
+
+                                ${escapeHtml(
+                                    h.nome ||
+                                    '-'
+                                )}
+
+                            </div>
+
+                            <div class="hist-detalhe">
+
+                                ${escapeHtml(
+                                    h.patente_anterior ||
+                                    h.de ||
+                                    '-'
+                                )}
+
+                                <span
+                                    style="
+                                    color:var(--green);
+                                    margin:0 5px;
+                                    "
+                                >
+                                    ➜
+                                </span>
+
+                                ${escapeHtml(
+                                    h.nova_patente ||
+                                    h.para ||
+                                    '-'
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="hist-meta">
+
+                            <div>
+
+                                ${
+                                    h.data_promocao
+                                    ? new Date(
+                                        h.data_promocao
+                                      ).toLocaleString(
+                                        'pt-BR'
+                                      )
+                                    : escapeHtml(
+                                        h.data ||
+                                        '-'
+                                      )
+                                }
+
+                            </div>
+
+                            <div
+                                style="
+                                color:var(--gold);
+                                "
+                            >
+
+                                AUTORIZADO POR:
+
+                                ${escapeHtml(
+                                    h.promovido_por_nome ||
+                                    h.por ||
+                                    '-'
+                                )}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    `
+                )
+                .join('');
+
+    } catch (erro) {
+
+        div.innerHTML =
+            '<p style="color:var(--gray);text-align:center;padding:20px;font-size:12px;">HISTÓRICO INDISPONÍVEL NO MOMENTO.</p>';
+
+    }
+
+}
+
+
+/* =========================
+   HIERARQUIA
+========================= */
+
+function renderizarHierarquia() {
+
+    const container =
+        document.getElementById(
+            'gridHierarquiaContainer'
+        );
+
+    container.innerHTML =
+        HIERARQUIA
+            .map(
+                p => `
+
+                <div
+                    class="card-patente ${
+                        p.elite
+                            ? 'elite'
+                            : ''
+                    }"
+                >
+
+                    <div>
+
+                        <div
+                            class="patente-nome"
+                        >
+
+                            ${escapeHtml(
+                                p.nome
+                            )}
+
+                        </div>
+
+                        <div
+                            class="patente-cdp"
+                        >
+
+                            ${
+                                p.diasNecessarios > 0
+                                ? `CDP: ${p.diasNecessarios} dia(s)`
+                                : 'Sem CDP'
+                            }
+
+                        </div>
+
+                    </div>
+
+                    <span
+                        class="patente-sigla"
+                    >
+
+                        ${escapeHtml(
+                            p.sigla
+                        )}
+
+                    </span>
+
+                </div>
+
+                `
+            )
+            .join('');
+
+}
+
+
+/* =========================
+   SEGURANÇA HTML
+========================= */
+
+function escapeHtml(value) {
+
+    return String(
+        value ?? ''
+    )
+    .replaceAll(
+        '&',
+        '&amp;'
+    )
+    .replaceAll(
+        '<',
+        '&lt;'
+    )
+    .replaceAll(
+        '>',
+        '&gt;'
+    )
+    .replaceAll(
+        '"',
+        '&quot;'
+    )
+    .replaceAll(
+        "'",
+        '&#039;'
+    );
+
+}
+
+document
+    .getElementById('nickInput')
+    .addEventListener(
+        'input',
+        buscarDados
+    );
+
+
+window.addEventListener(
+    'DOMContentLoaded',
+    async () => {
+
+        renderizarHierarquia();
+
+        carregarUsuarioSalvo();
+
+        await processarCallback();
+
+        carregarHistorico();
+
+    }
+);
+
+</script>
+
+</body>
+</html>
+
