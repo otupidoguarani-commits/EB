@@ -309,11 +309,11 @@ exports.handler = async event => {
       }
     });
 
-  } catch (error) {
+ } catch (error) {
     console.error('militar.js:', error);
 
     return json(500, {
-      erro: 'Erro interno ao consultar o militar.'
+      erro: 'Erro interno ao consultar o militar.',
+      detalhe: error.message
     });
-  }
-};
+}
