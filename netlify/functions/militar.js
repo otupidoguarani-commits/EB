@@ -239,7 +239,7 @@ exports.handler = async event => {
       identificador.replace(/,/g, '');
 
     const filtro =
-      `or(nome.ilike.*${termo}*,roblox_id.eq.${termo},discord_id.eq.${termo})`;
+      `or=(nome.ilike.*${termo}*,roblox_id.eq.${termo},discord_id.eq.${termo})`;
 
     const militares =
       await supabaseRequest(
