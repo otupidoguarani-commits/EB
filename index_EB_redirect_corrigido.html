@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>EB — Central de Comando & CDP</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#050805;
+    --bg2:#080d09;
+    --panel:#0b120d;
+    --panel2:#0f1811;
+    --panel3:#121d14;
+    --border:#1c3322;
+    --border2:#294a31;
+    --green:#39d353;
+    --green2:#15803d;
+    --green3:#0b5729;
+    --olive:#758c42;
+    --gold:#d4af37;
+    --gold2:#9f8124;
+    --white:#e7eee8;
+    --gray:#829287;
+    --red:#ef4444;
+    --blue:#5865f2;
+    --shadow:rgba(0,0,0,.55);
+}
+
+html{ scroll-behavior:smooth; }
+
+body{
+    background:
+        radial-gradient(circle at 50% -20%, rgba(57,211,83,.15), transparent 45%),
+        linear-gradient(rgba(5, 8, 5, 0.88), rgba(5, 8, 5, 0.92)),
+        url('https://tr.rbxcdn.com/180DAY-3c55a855491818d5fb1c1b211f8ab475/500/280/Image/Jpeg/noFilter') center/cover no-repeat fixed;
+    color:var(--white);
+    min-height:100vh;
+    font-family:'Rajdhani',sans-serif;
+    overflow-x:hidden;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background-image:
+        linear-gradient(rgba(57,211,83,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57,211,83,.025) 1px, transparent 1px);
+    background-size:40px 40px;
+    z-index:0;
+}
+
+body::after{
+    content:"";
+    position:fixed;
+    left:0; right:0; height:2px; top:-5px;
+    background:linear-gradient(90deg, transparent, rgba(57,211,83,.18), transparent);
+    animation:scan 8s linear infinite;
+    pointer-events:none;
+    z-index:999;
+}
+
+@keyframes scan{
+    0%{ top:-5px; }
+    100%{ top:100%; }
+}
+
+header{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:linear-gradient(90deg, rgba(5,8,5,.97), rgba(12,20,14,.96), rgba(5,8,5,.97));
+    border-bottom:1px solid var(--border2);
+    box-shadow:0 8px 30px rgba(0,0,0,.5);
+    backdrop-filter:blur(15px);
+}
+
+header::after{
+    content:"";
+    position:absolute;
+    bottom:-1px; left:0; width:180px; height:2px;
+    background:var(--green);
+    box-shadow:0 0 12px var(--green);
+}
+
+.cabecalho{
+    max-width:1500px;
+    margin:auto;
+    min-height:78px;
+    padding:0 25px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+}
+
+.logo{ display:flex; align-items:center; gap:14px; }
+.logo-brasao-img{
+    width:53px; height:53px;
+    object-fit:contain;
+    filter:drop-shadow(0 0 8px rgba(212,175,55,.4));
+}
+.logo-texto h1{ color:#fff; font-size:18px; font-weight:700; letter-spacing:3px; }
+.logo-texto p{ color:var(--green); font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:3px; margin-top:3px; }
+
+.status-servidor{
+    display:flex; align-items:center; gap:7px; padding:6px 10px;
+    border:1px solid var(--border); background:rgba(0,0,0,.25);
+    color:var(--gray); font-family:'Share Tech Mono',monospace; font-size:10px;
+}
+.status-servidor .bolinha{
+    width:7px; height:7px; border-radius:50%; background:var(--green);
+    box-shadow:0 0 8px var(--green); animation:pulse 1.8s infinite;
+}
+
+@keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
+
+.botao-discord{
+    border:1px solid #6570e9;
+    background:linear-gradient(135deg, #5865f2, #404bd2);
+    color:#fff; padding:10px 16px; border-radius:5px;
+    font-family:'Rajdhani',sans-serif; font-weight:700; letter-spacing:.8px;
+    cursor:pointer; display:flex; align-items:center; gap:8px;
+    transition:.25s; box-shadow:0 4px 15px rgba(88,101,242,.2);
+}
+.botao-discord:hover{ transform:translateY(-2px); box-shadow:0 5px 20px rgba(88,101,242,.4); }
+
+.usuario-logado{
+    display:none; align-items:center; gap:10px; padding:5px 9px;
+    background:#080e09; border:1px solid var(--border2);
+    clip-path:polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+.usuario-logado.mostrar{ display:flex; }
+.avatar{ width:38px; height:38px; border-radius:4px; border:1px solid var(--green); object-fit:cover; }
+.dados-usuario{ display:flex; flex-direction:column; }
+.nome-usuario{ font-size:14px; font-weight:700; color:#fff; }
+.patente-usuario{ font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--gold); letter-spacing:1px; }
+.btn-sair{ background:none; border:0; color:var(--gray); cursor:pointer; margin-left:5px; transition:.2s; }
+.btn-sair:hover{ color:var(--red); }
+
+.dashboard-container{
+    position:relative; z-index:1; max-width:1500px; width:100%;
+    margin:25px auto; padding:0 25px; display:grid;
+    grid-template-columns:270px 1fr; gap:20px;
+}
+
+.painel-lateral{
+    background:linear-gradient(180deg, rgba(15,24,17,.98), rgba(7,12,8,.98));
+    border:1px solid var(--border); padding:18px; height:max-content;
+    position:sticky; top:100px; box-shadow:0 15px 40px rgba(0,0,0,.25);
+}
+.painel-lateral::before{
+    content:"COMMAND // 01"; display:block; font-family:'Share Tech Mono',monospace;
+    font-size:9px; color:var(--green); letter-spacing:2px; padding-bottom:14px;
+    border-bottom:1px solid var(--border); margin-bottom:17px;
+}
+.titulo-menu{ font-size:10px; color:var(--gray); text-transform:uppercase; letter-spacing:2px; margin-bottom:10px; }
+.menu-navegacao{ display:flex; flex-direction:column; gap:5px; }
+
+.aba{
+    position:relative; width:100%; border:1px solid transparent; background:transparent;
+    color:var(--gray); padding:13px 12px; text-align:left; font-family:'Rajdhani',sans-serif;
+    font-size:14px; font-weight:600; letter-spacing:.5px; cursor:pointer; transition:.2s;
+    display:flex; align-items:center; gap:11px;
+}
+.aba::before{
+    content:""; width:3px; height:0; position:absolute; left:-1px; top:50%;
+    transform:translateY(-50%); background:var(--green); transition:.2s;
+}
+.aba:hover{ background:rgba(57,211,83,.05); color:#fff; border-color:var(--border); }
+.aba.ativa{
+    color:var(--green);
+    background:linear-gradient(90deg, rgba(57,211,83,.13), transparent);
+    border-color:rgba(57,211,83,.25);
+}
+.aba.ativa::before{ height:70%; box-shadow:0 0 8px var(--green); }
+.aba i{ width:20px; text-align:center; }
+
+.conteudo-principal{ min-width:0; display:flex; flex-direction:column; gap:20px; }
+.pagina{ display:none; }
+.pagina.ativa{ display:block; animation:entrada .35s ease; }
+
+@keyframes entrada{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+
+.banner-operacional{
+    min-height:300px; position:relative; overflow:hidden; border:1px solid var(--border2);
+    background:linear-gradient(90deg, rgba(3,7,4,.92) 5%, rgba(4,9,5,.80) 50%, rgba(4,8,5,.40)),
+        url('https://tr.rbxcdn.com/180DAY-3c55a855491818d5fb1c1b211f8ab475/500/280/Image/Jpeg/noFilter') center/cover no-repeat;
+    padding:45px; display:flex; align-items:center;
+    box-shadow:inset 0 0 100px rgba(0,0,0,.7), 0 15px 45px rgba(0,0,0,.3);
+}
+.banner-operacional::before{ content:""; position:absolute; inset:15px; border:1px solid rgba(57,211,83,.12); pointer-events:none; }
+.banner-operacional::after{
+    content:"CLASSIFIED // OPERATIONAL"; position:absolute; right:20px; top:20px;
+    color:rgba(255,255,255,.22); font-family:'Share Tech Mono',monospace; font-size:9px;
+    letter-spacing:2px; transform:rotate(90deg); transform-origin:right top;
+}
+.banner-conteudo{ max-width:650px; position:relative; z-index:2; }
+.tag-status{
+    display:inline-flex; align-items:center; gap:7px; color:var(--green);
+    border:1px solid rgba(57,211,83,.35); background:rgba(10,35,16,.75);
+    padding:6px 10px; font-family:'Share Tech Mono',monospace; font-size:10px;
+    letter-spacing:1.5px; margin-bottom:15px;
+}
+.banner-conteudo h2{ font-size:clamp(28px,4vw,48px); line-height:.98; letter-spacing:2px; color:#fff; text-shadow:0 3px 20px #000; margin-bottom:15px; }
+.banner-conteudo p{ max-width:570px; color:#b9c5bb; font-size:15px; line-height:1.5; }
+.codigo-operacao{ margin-top:20px; font-family:'Share Tech Mono',monospace; color:var(--gray); font-size:10px; letter-spacing:2px; }
+
+.cartao-militar{
+    position:relative; background:linear-gradient(145deg, rgba(15,25,17,.95), rgba(7,12,8,.95));
+    border:1px solid var(--border); padding:22px; margin-bottom:20px;
+    box-shadow:0 12px 35px rgba(0,0,0,.2); overflow:hidden;
+}
+.cartao-militar::before{
+    content:""; position:absolute; top:0; left:0; width:65px; height:2px;
+    background:var(--green); box-shadow:0 0 12px rgba(57,211,83,.4);
+}
+.cartao-militar::after{
+    content:""; position:absolute; right:0; bottom:0; width:35px; height:35px;
+    border-right:1px solid var(--border2); border-bottom:1px solid var(--border2);
+}
+.cartao-cabecalho{ display:flex; align-items:center; gap:12px; padding-bottom:15px; margin-bottom:20px; border-bottom:1px solid var(--border); }
+.cartao-cabecalho i{
+    width:35px; height:35px; display:flex; align-items:center; justify-content:center;
+    background:rgba(57,211,83,.08); border:1px solid rgba(57,211,83,.2); color:var(--green);
+}
+.cartao-cabecalho h3{ color:#fff; font-size:17px; letter-spacing:1px; text-transform:uppercase; }
+
+.grupo-input{ margin-bottom:18px; }
+label{ display:block; margin-bottom:7px; color:var(--gray); font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; }
+.campo-input-container{ position:relative; }
+.campo-input-container i{ position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--green); z-index:2; }
+input{
+    width:100%; padding:14px 15px 14px 43px; border:1px solid var(--border2);
+    background:linear-gradient(90deg, rgba(2,7,3,.9), rgba(10,18,12,.8));
+    color:#fff; font-family:'Share Tech Mono',monospace; font-size:13px; outline:none; transition:.25s; border-radius:2px;
+}
+input::placeholder{ color:#4d5c51; }
+input:focus{ border-color:var(--green); box-shadow:0 0 0 1px rgba(57,211,83,.15), 0 0 18px rgba(57,211,83,.08); }
+
+.btn-acao{
+    position:relative; width:100%; padding:14px; border:1px solid var(--green2);
+    background:linear-gradient(135deg, #0c5428, #16803d); color:#fff;
+    font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700; letter-spacing:2px;
+    cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:.25s; overflow:hidden;
+}
+.btn-acao::before{
+    content:""; position:absolute; top:0; left:-100%; width:100%; height:100%;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent); transition:.5s;
+}
+.btn-acao:hover:not(:disabled)::before{ left:100%; }
+.btn-acao:hover:not(:disabled){ border-color:var(--green); box-shadow:0 0 20px rgba(57,211,83,.15); transform:translateY(-1px); }
+.btn-acao:disabled{ background:#121914; border-color:#1b271e; color:#4d5a50; cursor:not-allowed; }
+
+.bloco-dados{
+    background:repeating-linear-gradient(0deg, rgba(57,211,83,.015) 0px, rgba(57,211,83,.015) 1px, transparent 1px, transparent 5px), #050a06;
+    border:1px solid var(--border2); padding:15px; margin:18px 0; display:none;
+}
+.bloco-dados.mostrar{ display:block; }
+.linha-dado{ display:flex; align-items:center; justify-content:space-between; gap:15px; padding:12px 5px; border-bottom:1px dashed rgba(42,71,51,.5); }
+.linha-dado:last-child{ border-bottom:0; }
+.rotulo{ color:var(--gray); font-size:12px; text-transform:uppercase; letter-spacing:.8px; }
+.valor{ color:var(--gold); font-family:'Share Tech Mono',monospace; font-size:13px; text-align:right; }
+.membro-destaque{ color:#fff; font-size:14px; font-weight:700; }
+
+.timer-box{
+    background:rgba(239,68,68,.08); border:1px solid rgba(239,68,68,.3);
+    padding:12px; text-align:center; margin-top:10px; border-radius:4px;
+}
+.timer-box.liberado{ background:rgba(57,211,83,.08); border-color:rgba(57,211,83,.3); }
+.timer-titulo{ font-size:11px; color:var(--gray); letter-spacing:1px; margin-bottom:4px; }
+.timer-valor{ font-family:'Share Tech Mono',monospace; font-size:22px; color:var(--red); font-weight:700; }
+.timer-box.liberado .timer-valor{ color:var(--green); }
+
+.status{ display:none; margin-top:15px; padding:12px; font-size:13px; font-weight:600; border-left:3px solid; }
+.status.sucesso{ display:flex; align-items:center; gap:8px; color:var(--green); background:rgba(57,211,83,.07); border-color:var(--green); }
+.status.erro{ display:flex; align-items:center; gap:8px; color:var(--red); background:rgba(239,68,68,.07); border-color:var(--red); }
+
+.item-historico{ position:relative; display:flex; align-items:center; justify-content:space-between; gap:15px; padding:15px 10px; border-bottom:1px solid var(--border); }
+.item-historico:last-child{ border-bottom:0; }
+.hist-info .hist-nome{ color:#fff; font-weight:700; font-size:14px; }
+.hist-info .hist-detalhe{ color:var(--gray); margin-top:4px; font-size:12px; }
+.hist-meta{ text-align:right; color:var(--gray); font-family:'Share Tech Mono',monospace; font-size:9px; line-height:1.8; }
+
+.grid-hierarquia{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:9px; }
+.card-patente{
+    position:relative; background:#070d08; border:1px solid var(--border); padding:13px;
+    display:flex; align-items:center; justify-content:space-between; transition:.2s; overflow:hidden;
+}
+.card-patente::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:2px; background:#233b28; }
+.card-patente:hover{ border-color:var(--border2); background:#0c160e; transform:translateX(3px); }
+.card-patente:hover::before{ background:var(--green); box-shadow:0 0 8px var(--green); }
+.card-patente.elite{ border-color:rgba(212,175,55,.35); background:linear-gradient(135deg, rgba(212,175,55,.07), rgba(5,9,6,.8)); }
+.card-patente.elite::before{ background:var(--gold); }
+.patente-nome{ color:#fff; font-weight:600; font-size:13px; }
+.patente-sigla{ padding:4px 7px; background:#111a13; border:1px solid var(--border2); color:var(--gold); font-family:'Share Tech Mono',monospace; font-size:9px; white-space:nowrap; }
+.patente-cdp{ color:var(--gray); font-size:10px; font-family:'Share Tech Mono',monospace; }
+
+footer{
+    position:relative; z-index:1; border-top:1px solid var(--border); background:#040704;
+    padding:18px; text-align:center; color:#536057; font-family:'Share Tech Mono',monospace;
+    font-size:9px; letter-spacing:1px;
+}
+.footer-status{ display:flex; justify-content:center; gap:20px; margin-bottom:7px; color:#68776c; }
+.footer-status span::before{ content:"●"; color:var(--green); margin-right:5px; }
+
+@media(max-width:1050px){
+    .status-servidor{ display:none; }
+    .dashboard-container{ grid-template-columns:220px 1fr; }
+}
+
+@media(max-width:800px){
+    .cabecalho{ padding:12px 15px; flex-wrap:wrap; }
+    .logo-texto h1{ font-size:14px; }
+    .logo-texto p{ font-size:7px; }
+    .logo-brasao-img{ width:43px; height:43px; }
+    .dashboard-container{ grid-template-columns:1fr; padding:0 12px; margin-top:15px; }
+    .painel-lateral{ position:relative; top:0; padding:10px; }
+    .painel-lateral::before{ display:none; }
+    .menu-navegacao{ display:grid; grid-template-columns:repeat(3,1fr); }
+    .aba{ justify-content:center; text-align:center; flex-direction:column; gap:5px; font-size:11px; padding:10px 5px; }
+    .banner-operacional{ min-height:260px; padding:30px 22px; }
+    .banner-conteudo h2{ font-size:32px; }
+    .cartao-militar{ padding:16px; }
+}
+
+@media(max-width:500px){
+    .botao-discord{ padding:9px; font-size:0; }
+    .botao-discord i{ font-size:16px; }
+    .usuario-logado{ max-width:190px; }
+    .dashboard-container{ padding:0 8px; }
+    .menu-navegacao{ grid-template-columns:1fr; }
+    .aba{ flex-direction:row; justify-content:flex-start; padding:11px; }
+    .banner-operacional{ min-height:290px; padding:25px 18px; }
+    .banner-conteudo h2{ font-size:28px; }
+    .banner-operacional::after{ display:none; }
+    .linha-dado{ flex-direction:column; align-items:flex-start; }
+    .valor{ text-align:left; }
+    .item-historico{ flex-direction:column; align-items:flex-start; }
+    .hist-meta{ text-align:left; }
+    .grid-hierarquia{ grid-template-columns:1fr; }
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="cabecalho">
+    <div class="logo">
+        <img class="logo-brasao-img" src="https://m.media-amazon.com/images/I/41Qph1TgC6L._AC_UF350,350_QL80_.jpg" alt="Brasão">
+        <div class="logo-texto">
+            <h1>EXÉRCITO BRASILEIRO</h1>
+            <p>CENTRAL DE COMANDO OPERACIONAL</p>
+        </div>
+    </div>
+
+    <div class="status-servidor">
+        <span class="bolinha"></span>
+        SISTEMA ONLINE
+    </div>
+
+    <button class="botao-discord" id="btnDiscord" onclick="entrarDiscord()">
+        <i class="fa-brands fa-discord"></i>
+        AUTENTICAR COM DISCORD
+    </button>
+
+    <div class="usuario-logado" id="areaUsuario">
+        <img class="avatar" id="avatarUser" src="" alt="Avatar">
+        <div class="dados-usuario">
+            <span class="nome-usuario" id="nomeUser">-</span>
+            <span class="patente-usuario" id="patenteUser">-</span>
+        </div>
+        <button class="btn-sair" onclick="sair()" title="Sair">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+    </div>
+</div>
+</header>
+
+<div class="dashboard-container">
+
+<aside class="painel-lateral">
+    <div class="titulo-menu">SISTEMA DE COMANDO</div>
+    <nav class="menu-navegacao">
+        <button class="aba ativa" onclick="trocarAba('promover')" id="abaPromover">
+            <i class="fa-solid fa-ranking-star"></i>
+            PROMOVER MILITAR
+        </button>
+
+        <button class="aba" onclick="trocarAba('cdp')" id="abaCdp">
+            <i class="fa-solid fa-id-card"></i>
+            CONSULTA CDP
+        </button>
+
+        <button class="aba" onclick="trocarAba('hierarquia')" id="abaHierarquia">
+            <i class="fa-solid fa-sitemap"></i>
+            HIERARQUIA
+        </button>
+    </nav>
+</aside>
+
+<main class="conteudo-principal">
+
+<div class="banner-operacional">
+    <div class="banner-conteudo">
+        <div class="tag-status">
+            <i class="fa-solid fa-circle" style="font-size:5px"></i>
+            SISTEMA OPERACIONAL ATIVO
+        </div>
+        <h2>CENTRAL DE<br>COMANDO & CDP</h2>
+        <p>Sistema integrado de gerenciamento militar com controle de tempo de permanência em patente (CDP) e contagem regressiva em tempo real.</p>
+        <div class="codigo-operacao">OPERATION // EB &nbsp;&nbsp;•&nbsp;&nbsp; STATUS // ACTIVE</div>
+    </div>
+</div>
+
+<!-- PAGINA: PROMOVER -->
+<div id="pagPromover" class="pagina ativa">
+<div class="cartao-militar">
+    <div class="cartao-cabecalho">
+        <i class="fa-solid fa-user-shield"></i>
+        <h3>Registro de Promoção</h3>
+    </div>
+
+    <div class="grupo-input">
+        <label for="nickInput">IDENTIFICAÇÃO DO MILITAR</label>
+        <div class="campo-input-container">
+            <i class="fa-solid fa-crosshairs"></i>
+            <input type="text" id="nickInput" placeholder="Digite o usuário Roblox / Discord">
+        </div>
+    </div>
+
+    <div class="bloco-dados" id="blocoDados">
+        <div class="linha-dado">
+            <span class="rotulo">Militar reconhecido</span>
+            <span class="membro-destaque" id="mostrarNick">-</span>
+        </div>
+
+        <div class="linha-dado">
+            <span class="rotulo">Patente atual</span>
+            <span class="valor" id="patenteAtual">-</span>
+        </div>
+
+        <div class="linha-dado">
+            <span class="rotulo">Próxima patente</span>
+            <span class="valor" id="proximaPatente">-</span>
+        </div>
+
+        <div class="linha-dado">
+            <span class="rotulo">Tempo CDP Requerido</span>
+            <span class="valor" id="tempoCdpRequerido">-</span>
+        </div>
+
+        <div class="timer-box" id="caixaTimer">
+            <div class="timer-titulo" id="timerTitulo">TEMPO RESTANTE CDP PARA PRÓXIMA PROMOÇÃO</div>
+            <div class="timer-valor" id="timerContagem">00d 00h 00m 00s</div>
+        </div>
+    </div>
+
+    <button class="btn-acao" id="btnPromover" onclick="confirmarPromocao()" disabled>
+        <i class="fa-solid fa-angles-up"></i>
+        EFETUAR PROMOÇÃO
+    </button>
+
+    <div class="status" id="caixaStatus"></div>
+</div>
+
+<div class="cartao-militar">
+    <div class="cartao-cabecalho">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <h3>Registro de Operações</h3>
+    </div>
+    <div id="listaHistorico">
+        <p style="color:var(--gray); text-align:center; padding:20px; font-size:12px;">
+            Nenhuma operação registrada.
+        </p>
+    </div>
+</div>
+</div>
+
+<!-- PAGINA: CDP -->
+<div id="pagCdp" class="pagina">
+<div class="cartao-militar">
+    <div class="cartao-cabecalho">
+        <i class="fa-solid fa-radar"></i>
+        <h3>Consulta de Capacitação de Patente (CDP)</h3>
+    </div>
+
+    <div class="grupo-input">
+        <label for="consultaNick">IDENTIFICAÇÃO DO OPERATIVO</label>
+        <div class="campo-input-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="consultaNick" placeholder="Digite o nome do militar" oninput="consultarPatente()">
+        </div>
+    </div>
+
+    <div class="bloco-dados" id="resultadoConsulta">
+        <div class="linha-dado">
+            <span class="rotulo">Operativo</span>
+            <span class="membro-destaque" id="consultaNome">-</span>
+        </div>
+
+        <div class="linha-dado">
+            <span class="rotulo">Patente registrada</span>
+            <span class="valor" id="consultaPatente">-</span>
+        </div>
+
+        <div class="linha-dado">
+            <span class="rotulo">Data da Última Promoção</span>
+            <span class="valor" id="consultaData">-</span>
+        </div>
+
+        <div class="linha-dado">
+            <span class="rotulo">Status do CDP</span>
+            <span class="valor" id="consultaStatusCdp">-</span>
+        </div>
+
+        <div class="timer-box" id="consultaCaixaTimer">
+            <div class="timer-titulo" id="consultaTimerTitulo">TEMPO PARA PRÓXIMA HABILITAÇÃO</div>
+            <div class="timer-valor" id="consultaTimerValor">00d 00h 00m 00s</div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- PAGINA: HIERARQUIA -->
+<div id="pagHierarquia" class="pagina">
+<div class="cartao-militar">
+    <div class="cartao-cabecalho">
+        <i class="fa-solid fa-layer-group"></i>
+        <h3>Cadeia Hierárquica & Tempos de CDP</h3>
+    </div>
+    <div class="grid-hierarquia" id="gridHierarquiaContainer"></div>
+</div>
+</div>
+
+</main>
+</div>
+
+<footer>
+<div class="footer-status">
+    <span>SISTEMA ONLINE</span>
+    <span>DATABASE ATIVA</span>
+    <span>SEGURANÇA OPERACIONAL</span>
+</div>
+Exército Brasileiro — Central de Comando Operacional © 2026
+</footer>
+
+<script>
+const REDIRECT_URI = 'https://exercito-brasileiro-eb.netlify.app';
+const API = '/.netlify/functions';
+
+const HIERARQUIA = [
+    { nome:'Recruta', sigla:'REC', diasNecessarios:0 },
+    { nome:'Soldado', sigla:'SD', diasNecessarios:1 },
+    { nome:'Cabo', sigla:'CB', diasNecessarios:1 },
+    { nome:'Terceiro Sargento', sigla:'3° SGT', diasNecessarios:2 },
+    { nome:'Segundo Sargento', sigla:'2° SGT', diasNecessarios:2 },
+    { nome:'Primeiro Sargento', sigla:'1° SGT', diasNecessarios:3 },
+    { nome:'Subtenente', sigla:'ST', diasNecessarios:3 },
+    { nome:'Aspirante a Oficial', sigla:'ASP', diasNecessarios:3 },
+    { nome:'Segundo Tenente', sigla:'2° TEN', diasNecessarios:3 },
+    { nome:'Primeiro Tenente', sigla:'1° TEN', diasNecessarios:4 },
+    { nome:'Capitão', sigla:'CAP', diasNecessarios:4 },
+    { nome:'Major', sigla:'MAJ', diasNecessarios:4 },
+    { nome:'Tenente Coronel', sigla:'TEN-CEL', diasNecessarios:5 },
+    { nome:'Coronel', sigla:'CEL', diasNecessarios:5 },
+    { nome:'General de Brigada', sigla:'GEN BDA', diasNecessarios:6 },
+    { nome:'General de Divisão', sigla:'GEN DV', diasNecessarios:7 },
+    { nome:'General de Exército', sigla:'GEN EX', diasNecessarios:8 },
+    { nome:'Elite Militar', sigla:'EM', elite:true, diasNecessarios:10 },
+    { nome:'Elite Secreta', sigla:'ES', elite:true, diasNecessarios:12 },
+    { nome:'Elite Real', sigla:'ER', elite:true, diasNecessarios:14 }
+];
+
+let usuarioLogado = null;
+let militarConsultado = null;
+let intervalTimerPromover = null;
+let intervalTimerConsulta = null;
+
+async function apiFetch(path, options = {}) {
+    const response = await fetch(`${API}${path}`, {
+        credentials: 'include',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...(options.headers || {})
+        }
+    });
+
+    const text = await response.text();
+
+    let data = {};
+    try {
+        data = text ? JSON.parse(text) : {};
+    } catch {
+        data = { erro: text };
+    }
+
+    if (!response.ok) {
+        throw new Error(
+            data.erro ||
+            data.error ||
+            `Erro HTTP ${response.status}`
+        );
+    }
+
+    return data;
+}
+
+function entrarDiscord() {
+    const clientId = '1555374399920541816';
+
+    const scope = encodeURIComponent(
+        'identify guilds.members.read'
+    );
+
+    const url =
+        `https://discord.com/oauth2/authorize` +
+        `?client_id=${clientId}` +
+        `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
+        `&response_type=code` +
+        `&scope=${scope}`;
+
+    window.location.href = url;
+}
+
+async function processarCallback() {
+    const params = new URLSearchParams(
+        window.location.search
+    );
+
+    const code = params.get('code');
+
+    if (!code) return;
+
+    try {
+        const data = await apiFetch('/auth', {
+            method: 'POST',
+            body: JSON.stringify({
+                code,
+                redirect_uri: REDIRECT_URI
+            })
+        });
+
+        if (data.usuario) {
+            usuarioLogado = data.usuario;
+
+            localStorage.setItem(
+                'usuario_ativo',
+                JSON.stringify(usuarioLogado)
+            );
+
+            atualizarInterfaceUsuario();
+            carregarHistorico();
+        }
+
+        window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+        );
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        mostrarStatus(
+            'erro',
+            '<i class="fa-solid fa-triangle-exclamation"></i> ' +
+            escapeHtml(
+                erro.message ||
+                'Falha na autenticação.'
+            )
+        );
+
+        window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+        );
+    }
+}
+
+function carregarUsuarioSalvo() {
+
+    try {
+
+        const salvo =
+            localStorage.getItem('usuario_ativo');
+
+        if (salvo) {
+
+            usuarioLogado =
+                JSON.parse(salvo);
+
+            atualizarInterfaceUsuario();
+        }
+
+    } catch {
+
+        localStorage.removeItem(
+            'usuario_ativo'
+        );
+    }
+}
+
+function atualizarInterfaceUsuario() {
+
+    if (!usuarioLogado) return;
+
+    document.getElementById(
+        'btnDiscord'
+    ).style.display = 'none';
+
+    document.getElementById(
+        'areaUsuario'
+    ).classList.add('mostrar');
+
+    document.getElementById(
+        'nomeUser'
+    ).textContent =
+        usuarioLogado.nome ||
+        usuarioLogado.username ||
+        '-';
+
+    document.getElementById(
+        'patenteUser'
+    ).textContent =
+        usuarioLogado.patente ||
+        'PATENTE NÃO IDENTIFICADA';
+
+    if (usuarioLogado.avatar) {
+
+        document.getElementById(
+            'avatarUser'
+        ).src =
+            usuarioLogado.avatar;
+    }
+}
+
+async function sair() {
+
+    try {
+
+        await apiFetch(
+            '/auth',
+            {
+                method:'DELETE'
+            }
+        );
+
+    } catch {}
+
+    localStorage.removeItem(
+        'usuario_ativo'
+    );
+
+    usuarioLogado = null;
+    militarConsultado = null;
+
+    document.getElementById(
+        'btnDiscord'
+    ).style.display = 'flex';
+
+    document.getElementById(
+        'areaUsuario'
+    ).classList.remove('mostrar');
+
+    document.getElementById(
+        'btnPromover'
+    ).disabled = true;
+}
+
+function trocarAba(nome) {
+
+    document
+        .querySelectorAll('.aba')
+        .forEach(a =>
+            a.classList.remove('ativa')
+        );
+
+    document
+        .querySelectorAll('.pagina')
+        .forEach(p =>
+            p.classList.remove('ativa')
+        );
+
+    const idAba =
+        `aba${nome.charAt(0).toUpperCase() + nome.slice(1)}`;
+
+    const idPagina =
+        `pag${nome.charAt(0).toUpperCase() + nome.slice(1)}`;
+
+    document
+        .getElementById(idAba)
+        ?.classList.add('ativa');
+
+    document
+        .getElementById(idPagina)
+        ?.classList.add('ativa');
+}
+
+function formatarTempo(ms) {
+
+    if (ms <= 0)
+        return '00d 00h 00m 00s';
+
+    const segundos =
+        Math.floor((ms / 1000) % 60);
+
+    const minutos =
+        Math.floor((ms / (1000 * 60)) % 60);
+
+    const horas =
+        Math.floor(
+            (ms / (1000 * 60 * 60)) % 24
+        );
+
+    const dias =
+        Math.floor(
+            ms / (1000 * 60 * 60 * 24)
+        );
+
+    return `${String(dias).padStart(2,'0')}d ` +
+           `${String(horas).padStart(2,'0')}h ` +
+           `${String(minutos).padStart(2,'0')}m ` +
+           `${String(segundos).padStart(2,'0')}s`;
+}
+
+async function buscarDados() {
+
+    const nick =
+        document
+            .getElementById('nickInput')
+            .value
+            .trim();
+
+    if (intervalTimerPromover)
+        clearInterval(intervalTimerPromover);
+
+    if (!nick) {
+
+        document
+            .getElementById('blocoDados')
+            .classList.remove('mostrar');
+
+        document
+            .getElementById('btnPromover')
+            .disabled = true;
+
+        militarConsultado = null;
+
+        return;
+    }
+
+    if (!usuarioLogado) {
+
+        document
+            .getElementById('blocoDados')
+            .classList.remove('mostrar');
+
+        document
+            .getElementById('btnPromover')
+            .disabled = true;
+
+        return;
+    }
+
+    try {
+
+        const data =
+            await apiFetch(
+                `/militar?identificador=${encodeURIComponent(nick)}`
+            );
+
+        const militar =
+            data.militar || data;
+
+        if (!militar || !militar.patente)
+            throw new Error(
+                'Militar não encontrado.'
+            );
+
+        militarConsultado =
+            militar;
+
+        const indice =
+            HIERARQUIA.findIndex(
+                p =>
+                    p.nome === militar.patente ||
+                    p.sigla === militar.patente
+            );
+
+        const patenteAtual =
+            HIERARQUIA[
+                indice >= 0 ? indice : 0
+            ];
+
+        const proxima =
+            data.proximaPatente ||
+            HIERARQUIA[indice + 1];
+
+        document.getElementById(
+            'mostrarNick'
+        ).textContent =
+            militar.nome || nick;
+
+        document.getElementById(
+            'patenteAtual'
+        ).textContent =
+            `${patenteAtual.nome} [${patenteAtual.sigla}]`;
+
+        document.getElementById(
+            'proximaPatente'
+        ).textContent =
+            proxima
+                ? `${proxima.nome} [${proxima.sigla}]`
+                : 'PATENTE MÁXIMA ATINGIDA';
+
+        document.getElementById(
+            'tempoCdpRequerido'
+        ).textContent =
+            patenteAtual.diasNecessarios > 0
+                ? `${patenteAtual.diasNecessarios} dia(s)`
+                : 'Sem carência';
+
+        document
+            .getElementById('blocoDados')
+            .classList.add('mostrar');
+
+        const atualizar = () => {
+
+            const restante =
+                Number(
+                    data.cdpRestanteMs ?? 0
+                );
+
+            const caixa =
+                document.getElementById(
+                    'caixaTimer'
+                );
+
+            if (restante <= 0) {
+
+                caixa.className =
+                    'timer-box liberado';
+
+                document.getElementById(
+                    'timerTitulo'
+                ).textContent =
+                    'SITUAÇÃO CDP // LIBERADO PARA PROMOÇÃO';
+
+                document.getElementById(
+                    'timerContagem'
+                ).textContent =
+                    'CDP CONCLUÍDO';
+
+                document.getElementById(
+                    'btnPromover'
+                ).disabled =
+                    !proxima;
+
+                if (intervalTimerPromover)
+                    clearInterval(
+                        intervalTimerPromover
+                    );
+
+            } else {
+
+                caixa.className =
+                    'timer-box';
+
+                document.getElementById(
+                    'timerTitulo'
+                ).textContent =
+                    'TEMPO RESTANTE CDP PARA PRÓXIMA PROMOÇÃO';
+
+                document.getElementById(
+                    'timerContagem'
+                ).textContent =
+                    formatarTempo(restante);
+
+                document.getElementById(
+                    'btnPromover'
+                ).disabled = true;
+
+                data.cdpRestanteMs =
+                    Math.max(
+                        0,
+                        data.cdpRestanteMs - 1000
+                    );
+            }
+        };
+
+        atualizar();
+
+        if (
+            Number(data.cdpRestanteMs) > 0
+        ) {
+
+            intervalTimerPromover =
+                setInterval(
+                    atualizar,
+                    1000
+                );
+        }
+
+    } catch (erro) {
+
+        militarConsultado = null;
+
+        document
+            .getElementById('blocoDados')
+            .classList.remove('mostrar');
+
+        document
+            .getElementById('btnPromover')
+            .disabled = true;
+
+        mostrarStatus(
+            'erro',
+            '<i class="fa-solid fa-triangle-exclamation"></i> ' +
+            escapeHtml(erro.message)
+        );
+    }
+}
+
+async function confirmarPromocao() {
+
+    if (
+        !usuarioLogado ||
+        !militarConsultado
+    ) {
+
+        mostrarStatus(
+            'erro',
+            '<i class="fa-solid fa-triangle-exclamation"></i> AUTENTICAÇÃO E MILITAR NECESSÁRIOS.'
+        );
+
+        return;
+    }
+
+    const nick =
+        document
+            .getElementById('nickInput')
+            .value
+            .trim();
+
+    if (!nick) return;
+
+    const btn =
+        document.getElementById(
+            'btnPromover'
+        );
+
+    btn.disabled = true;
+
+    try {
+
+        const data =
+            await apiFetch(
+                '/promover',
+                {
+                    method:'POST',
+                    body:JSON.stringify({
+                        identificador:nick
+                    })
+                }
+            );
+
+        mostrarStatus(
+            'sucesso',
+            `<i class="fa-solid fa-circle-check"></i> ${
+                escapeHtml(
+                    data.mensagem ||
+                    'PROMOÇÃO CONCLUÍDA.'
+                )
+            }`
+        );
+
+        document.getElementById(
+            'nickInput'
+        ).value = '';
+
+        document
+            .getElementById('blocoDados')
+            .classList.remove('mostrar');
+
+        militarConsultado = null;
+
+        carregarHistorico();
+
+    } catch (erro) {
+
+        mostrarStatus(
+            'erro',
+            '<i class="fa-solid fa-triangle-exclamation"></i> ' +
+            escapeHtml(
+                erro.message
+            )
+        );
+
+        btn.disabled = false;
+    }
+}
+
+let consultaDebounce;
+
+function consultarPatente() {
+
+    clearTimeout(
+        consultaDebounce
+    );
+
+    const nick =
+        document
+            .getElementById(
+                'consultaNick'
+            )
+            .value
+            .trim();
+
+    if (!nick) {
+
+        document
+            .getElementById(
+                'resultadoConsulta'
+            )
+            .classList.remove(
+                'mostrar'
+            );
+
+        return;
+    }
+
+    consultaDebounce =
+        setTimeout(
+            async () => {
+
+                if (intervalTimerConsulta)
+                    clearInterval(
+                        intervalTimerConsulta
+                    );
+
+                try {
+
+                    const data =
+                        await apiFetch(
+                            `/militar?identificador=${encodeURIComponent(nick)}`
+                        );
+
+                    const militar =
+                        data.militar || data;
+
+                    document
+                        .getElementById(
+                            'resultadoConsulta'
+                        )
+                        .classList.add(
+                            'mostrar'
+                        );
+
+                    document.getElementById(
+                        'consultaNome'
+                    ).textContent =
+                        militar.nome || nick;
+
+                    document.getElementById(
+                        'consultaPatente'
+                    ).textContent =
+                        militar.patente || '-';
+
+                    const dataPromocao =
+                        militar.data_promocao
+                            ? new Date(
+                                militar.data_promocao
+                              )
+                            : null;
+
+                    document.getElementById(
+                        'consultaData'
+                    ).textContent =
+                        dataPromocao
+                            ? dataPromocao.toLocaleString('pt-BR')
+                            : '-';
+
+                    const atualizar =
+                        () => {
+
+                            const restante =
+                                Number(
+                                    data.cdpRestanteMs ?? 0
+                                );
+
+                            if (restante <= 0) {
+
+                                document.getElementById(
+                                    'consultaStatusCdp'
+                                ).textContent =
+                                    'LIBERADO // APTO PARA A PRÓXIMA PATENTE';
+
+                                document.getElementById(
+                                    'consultaCaixaTimer'
+                                ).className =
+                                    'timer-box liberado';
+
+                                document.getElementById(
+                                    'consultaTimerTitulo'
+                                ).textContent =
+                                    'STATUS DO CDP';
+
+                                document.getElementById(
+                                    'consultaTimerValor'
+                                ).textContent =
+                                    'HABILITADO PARA PROMOÇÃO';
+
+                                if (intervalTimerConsulta)
+                                    clearInterval(
+                                        intervalTimerConsulta
+                                    );
+
+                            } else {
+
+                                document.getElementById(
+                                    'consultaStatusCdp'
+                                ).textContent =
+                                    'EM CONTAGEM REGRESSIVA (CDP ATIVO)';
+
+                                document.getElementById(
+                                    'consultaCaixaTimer'
+                                ).className =
+                                    'timer-box';
+
+                                document.getElementById(
+                                    'consultaTimerTitulo'
+                                ).textContent =
+                                    'TEMPO RESTANTE PARA HABILITAÇÃO';
+
+                                document.getElementById(
+                                    'consultaTimerValor'
+                                ).textContent =
+                                    formatarTempo(
+                                        restante
+                                    );
+
+                                data.cdpRestanteMs =
+                                    Math.max(
+                                        0,
+                                        data.cdpRestanteMs - 1000
+                                    );
+                            }
+                        };
+
+                    atualizar();
+
+                    if (
+                        Number(
+                            data.cdpRestanteMs
+                        ) > 0
+                    ) {
+
+                        intervalTimerConsulta =
+                            setInterval(
+                                atualizar,
+                                1000
+                            );
+                    }
+
+                } catch {
+
+                    document
+                        .getElementById(
+                            'resultadoConsulta'
+                        )
+                        .classList.remove(
+                            'mostrar'
+                        );
+                }
+
+            },
+            300
+        );
+}
+
+function mostrarStatus(
+    tipo,
+    texto
+) {
+
+    const el =
+        document.getElementById(
+            'caixaStatus'
+        );
+
+    el.className =
+        `status ${tipo}`;
+
+    el.innerHTML =
+        texto;
+
+    setTimeout(
+        () => {
+            el.className =
+                'status';
+        },
+        5000
+    );
+}
+
+async function carregarHistorico() {
+
+    const div =
+        document.getElementById(
+            'listaHistorico'
+        );
+
+    if (!usuarioLogado) {
+
+        div.innerHTML =
+            '<p style="color:var(--gray);text-align:center;padding:20px;font-size:12px;">AUTENTIQUE-SE PARA CONSULTAR O HISTÓRICO.</p>';
+
+        return;
+    }
+
+    try {
+
+        const data =
+            await apiFetch(
+                '/historico'
+            );
+
+        const historico =
+            data.historico || [];
+
+        if (!historico.length) {
+
+            div.innerHTML =
+                '<p style="color:var(--gray);text-align:center;padding:20px;font-size:12px;">NENHUMA OPERAÇÃO REGISTRADA.</p>';
+
+            return;
+        }
+
+        div.innerHTML =
+            historico.map(
+                h => `
+                <div class="item-historico">
+
+                    <div class="hist-info">
+
+                        <div class="hist-nome">
+                            ${escapeHtml(
+                                h.nome || '-'
+                            )}
+                        </div>
+
+                        <div class="hist-detalhe">
+
+                            ${escapeHtml(
+                                h.patente_anterior ||
+                                h.de ||
+                                '-'
+                            )}
+
+                            <span
+                                style="color:var(--green);margin:0 5px;"
+                            >
+                                ➜
+                            </span>
+
+                            ${escapeHtml(
+                                h.nova_patente ||
+                                h.para ||
+                                '-'
+                            )}
+
+                        </div>
+
+                    </div>
+
+                    <div class="hist-meta">
+
+                        <div>
+                            ${
+                                h.data_promocao
+                                ? new Date(
+                                    h.data_promocao
+                                  ).toLocaleString('pt-BR')
+                                : escapeHtml(
+                                    h.data || '-'
+                                  )
+                            }
+                        </div>
+
+                        <div style="color:var(--gold);">
+
+                            AUTORIZADO POR:
+                            ${escapeHtml(
+                                h.promovido_por_nome ||
+                                h.por ||
+                                '-'
+                            )}
+
+                        </div>
+
+                    </div>
+
+                </div>
+                `
+            )
+            .join('');
+
+    } catch {
+
+        div.innerHTML =
+            '<p style="color:var(--gray);text-align:center;padding:20px;font-size:12px;">HISTÓRICO INDISPONÍVEL NO MOMENTO.</p>';
+    }
+}
+
+function renderizarHierarquia() {
+
+    const container =
+        document.getElementById(
+            'gridHierarquiaContainer'
+        );
+
+    container.innerHTML =
+        HIERARQUIA.map(
+            p => `
+            <div class="card-patente ${
+                p.elite
+                ? 'elite'
+                : ''
+            }">
+
+                <div>
+
+                    <div class="patente-nome">
+                        ${escapeHtml(
+                            p.nome
+                        )}
+                    </div>
+
+                    <div class="patente-cdp">
+
+                        ${
+                            p.diasNecessarios > 0
+                            ? `CDP: ${p.diasNecessarios} dia(s)`
+                            : 'Sem CDP'
+                        }
+
+                    </div>
+
+                </div>
+
+                <span class="patente-sigla">
+                    ${escapeHtml(
+                        p.sigla
+                    )}
+                </span>
+
+            </div>
+            `
+        )
+        .join('');
+}
+
+function escapeHtml(value) {
+
+    return String(
+        value ?? ''
+    )
+    .replaceAll(
+        '&',
+        '&amp;'
+    )
+    .replaceAll(
+        '<',
+        '&lt;'
+    )
+    .replaceAll(
+        '>',
+        '&gt;'
+    )
+    .replaceAll(
+        '"',
+        '&quot;'
+    )
+    .replaceAll(
+        "'",
+        '&#039;'
+    );
+}
+
+document
+    .getElementById(
+        'nickInput'
+    )
+    .addEventListener(
+        'input',
+        buscarDados
+    );
+
+window.addEventListener(
+    'DOMContentLoaded',
+    async () => {
+
+        renderizarHierarquia();
+
+        carregarUsuarioSalvo();
+
+        await processarCallback();
+
+        carregarHistorico();
+    }
+);
+</script>
+</body>
+</html>
